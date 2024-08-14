@@ -3,19 +3,21 @@
 This is a prototype to do deep copies of Metabase collections.
 
 ## Requirements
-* A Metabase instance with a Pro license
-* A collection to clone
+* A Metabase instance with a Pro license, to unlock the serialization feature to import/export the collection
+* An API key, which can be created on Metabase at `/admin/settings/authentication/api-keys` 
+* A collection you want to clone or change the data source for 
 
 ## Installation
 
 * Make sure you have Ruby installed
+* Check out this repo with `git clone https://github.com/metabase/template-clone-prototype.git`
 * Install the dependencies with `bundle install`
 * Test if the dependencies are satisfied by running `ruby clone.rb --help`.
 
 ## Supported use cases and usage
 
-1. clone a collection (to import it within the origin Metabase instance), optionally updating the underlying data source:
-2. Update the data source, to use this within the origin or in a different destination Metabase instance
+1. clone a collection (to import it within the origin Metabase instance), optionally updating the underlying data source
+2. Change the data source of a collection
    
 ## Limitations
 
