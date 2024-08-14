@@ -1,0 +1,18 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    nanoid (2.0.0)
+    slop (4.10.1)
+    yaml (0.3.0)
+
+PLATFORMS
+  arm64-darwin-22
+  ruby
+
+DEPENDENCIES
+  nanoid (~> 2.0)
+  slop (~> 4.10)
+  yaml (~> 0.3.0)
+
+BUNDLED WITH
+   2.5.3
