@@ -18,23 +18,14 @@ require 'logger'
   end
 end
 
-
-# arguments
-#@source_dir = File.absolute_path(ARGV[0]) # original files
-#@source_datasource = ARGV[1] # original datasource
-#@target_datasource = ARGV[2] # modified datasource
-#@new_top_collection_name = ARGV[3]
-#@duplicate = ARGV[4]=="--duplicate"
-
+# Counters to keep track of how many entities were processed
 @num_collections = 0
 @num_dash = 0
 @num_questions = 0
 @num_models = 0
 
-########
-# TODO: Go through each card file in the source directory
-
-# Example directory: site-2024-07-30_17-44/collections/_s2ntQI8-FhJGatZY3nEn_automatically_generated_dashboards/**/cards/*.yaml
+# A memory map of entity IDs
+# If the duplicate param was provided, we need to remap all entity IDs
 @entity_id_map = {}
 def entity_id_for(entity_id, remap=true)
   raise "Attempting to map for empty entity_id" if entity_id.nil? || entity_id.empty?
@@ -87,6 +78,7 @@ def update_entity_ids(entity, type=nil, update_parent=true)
 end
 
 def update_datasource(entity)
+  @log.debug "Updating datasource for #{entity["entity_id"]}"
   if entity.has_key?("database_id") && entity["database_id"] == @opts["source-datasource"]
     entity["database_id"] = @opts["target-datasource"]
   end
@@ -129,9 +121,12 @@ Dir.glob("#{@opts["yaml-files"]}/collections/*/*.yaml") do |yaml_file|
   update_entity_ids(entity, "collection", false) if @opts[:duplicate]
 
   # Update name and slug
-  entity["name"] = @opts["new-collection-name"]
-  entity["slug"] = @opts["new-collection-name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
-  entity["serdes/meta"][0]["label"] = @opts["new-collection-name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+  unless @opts["new-collection-name"].nil? || @opts["new-collection-name"].empty?
+    entity["name"] = @opts["new-collection-name"]
+    entity["slug"] = @opts["new-collection-name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+    entity["serdes/meta"][0]["label"] = @opts["new-collection-name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+  end
+
   @num_collections+=1
   File.write(yaml_file, entity.to_yaml)
   @log.debug "Wrote #{yaml_file}"
